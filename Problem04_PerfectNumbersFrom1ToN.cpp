@@ -61,4 +61,5 @@ void Printresult(int number){
 int main(){
     int number=ReadInformation("Please Enter number:");
     Printresult(number);
+    return 0;
 }
