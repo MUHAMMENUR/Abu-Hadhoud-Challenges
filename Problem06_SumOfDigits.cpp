@@ -39,6 +39,8 @@ int SumOfDigits(int number){
 int main(){
    int UserNumber= ReadInformation("Please Enter a positive number:");
 
+
+// Printing the result by calling the function inside the cout
    cout<<"Sum of digits = "<<SumOfDigits(UserNumber);
 
 
