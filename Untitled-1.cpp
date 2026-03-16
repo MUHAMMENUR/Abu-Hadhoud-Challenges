@@ -16,6 +16,8 @@ enum EnMenu{
     ADD_VOLUNTEER =1,
     DISPLAY_ALL=2,
     SEARCH_BY_SKILL=3,
+    CHANGE_STATUS = 4,
+    Deletevolunteer=5,
     EXIT=0
 };
 struct Volunteer{
@@ -44,6 +46,9 @@ int ShowMenu(){
     cout<<"1. GONULLU EKLE "<<endl;
     cout<<"2. TUM LİSTEYI GÖSTER "<<endl;
     cout<<"3. BECEREYE GORE ARA "<<endl;
+    cout<<"4. DURUM DEĞİŞTİR "<<endl;
+    cout<<"5.GÖNÜLLÜ SİL"<<endl;
+
     cout<<"0. CIKIS"<<endl;
     cout<<"Seciminiz: ";
     cin>>choice;
@@ -51,8 +56,10 @@ int ShowMenu(){
     if(choice=="1")return ADD_VOLUNTEER;
     if (choice=="2")return DISPLAY_ALL;
     if(choice=="3")return SEARCH_BY_SKILL;
+    if(choice=="4")return CHANGE_STATUS;
+    if(choice=="5")return Deletevolunteer;
     if(choice=="0")return EXIT;
-    cout<<"HATA! Lutfen tekrar deneyin.... 1, 2 , 3  veya 0 seciniz";
+    cout<<"HATA! Lutfen tekrar deneyin.... 1, 2 ,3 ,4 ,5 veya 0 seciniz";
    
     
    }
@@ -62,7 +69,7 @@ int ShowMenu(){
 
 void ShoWelcomeMessage(){
 cout << "*****************************************" << endl;
-cout << "* AFET GONULLU YONETIM SISTEMI    *" << endl;
+cout << "* AGS - AFET GONULLU SISTEMLERI   *" << endl;
 cout << "*****************************************" << endl;
 
     
@@ -279,31 +286,27 @@ cout<<"1. Arama kurtarma\n2. sağlık personeli\n3. Tercüman\n4. Muhendis\n5. P
     
     
 }
-void SaveToFile(Volunteer list[], int count) {
-    // أجبر البرنامج يحفظ بالمسار اللي أنت فاتحه بالظبط
-    ofstream jsFile("Volunteers.txt"); 
-    
-    if (jsFile.is_open()) {
-        jsFile << "const volunteersData = [\n"; 
+//VERİ KAYDETME FONKSİYONU (RAM'den Sabit Diske)
+
+void SaveToTxtFile(Volunteer list[], int count) {
+    ofstream file("Volunteers.txt"); 
+    if (file.is_open()) {
         for (int i = 0; i < count; i++) {
             string status = (list[i].Isavalible) ? "Musait" : "Mesgul";
-            jsFile << "  {\n";
-            jsFile << "    \"id\": " << i + 1 << ",\n";
-            jsFile << "    \"name\": \"" << list[i].Name << "\",\n";
-            jsFile << "    \"number\": \"" << list[i].Number << "\",\n";
-            jsFile << "    \"city\": \"" << list[i].City << "\",\n";
-            jsFile << "    \"skill\": \"" << list[i].Skill << "\",\n";
-            jsFile << "    \"status\": \"" << status << "\"\n";
-            jsFile << "  }";
-            if (i < count - 1) jsFile << ","; 
-            jsFile << "\n";
+            
+            file << list[i].Name << "|" 
+                 << list[i].City << "|" 
+                 << list[i].Number << "|" 
+                 << list[i].Skill << "|" 
+                 << status << "|" << endl;
         }
-        jsFile << "];\n\n"; 
-        jsFile << "if(typeof renderUI === 'function') { renderUI(volunteersData); }";
-        jsFile.close();
-        cout << "\n[OK] Veriler D:\\MyProgrammingJourney\\data.js adresine yazildi!" << endl;
+        file.close();
+        cout << "\n[OK] Veriler Volunteers.txt dosyasina basariyla kaydedildi!" << endl;
     }
 }
+
+//VERİ KAYDETME FONKSİYONU (RAM'den Sabit Diske)
+
 int LoadFromFile(Volunteer list[]) {
     ifstream file("Volunteers.txt");
     int count = 0;
@@ -327,6 +330,58 @@ int LoadFromFile(Volunteer list[]) {
         file.close();
     }
     return count;
+}
+void UpdateStatus(Volunteer list[], int count) {
+    int id;
+    cout << "\nDurumunu degistirmek istediginiz kisinin ID'sini giriniz: ";
+    cin >> id;
+
+    if (id < 1 || id > count) {
+        cout << "[HATA] Gecersiz ID!" << endl;
+        return;
+    }
+
+    list[id - 1].Isavalible = !list[id - 1].Isavalible;
+    
+    string newStatus = (list[id-1].Isavalible) ? "Musait" : "Mesgul";
+    cout << "\n[OK] " << list[id-1].Name << " isimli kisinin yeni durumu: " << newStatus << endl;
+}
+void DeleteVolunteer(Volunteer list[], int &count) {
+    if (count == 0) {
+        cout << "\n[!] Liste boك, silinecek kimse yok!" << endl;
+        return;
+    }
+
+    int id;
+    cout << "\nSilmek istediginiz kisinin ID numarasini giriniz: ";
+    cin >> id;
+
+  
+    if (id < 1 || id > count) {
+        cout << "[HATA] Gecersiz ID! Lutfen 1 ile " << count << " arasinda bir rakam giriniz." << endl;
+        return;
+    }
+
+   
+    char confirm;
+    cout << list[id-1].Name << " isimli kaydi silmek istediginize emin misiniz? (y/n): ";
+    cin >> confirm;
+
+    if (confirm == 'y' || confirm == 'Y') {
+        
+        for (int i = id - 1; i < count - 1; i++) {
+            list[i] = list[i + 1]; 
+        }
+
+        count--; 
+
+       
+        SaveToTxtFile(list, count);
+
+        cout << "\n[OK] Kayit basariyla silindi " << endl;
+    } else {
+        cout << "\n[!] Islem iptal edildi." << endl;
+    }
 }
 // ana mantığı buraya topladık: Main fonksiyonunu temiz tutmak için gelecekte bu kod üzerinde geliştirme yapmak istesek kolay olsun diye
 void RunVolunteerSystem(){
@@ -352,8 +407,16 @@ void RunVolunteerSystem(){
         // Fonksiyona diziyi (Arvolunteer) ve güncel sayıyı (totalcount) gönderiyoruz
              SearchBySkill(Arvolunteer,totalcount);
              break;
+        case CHANGE_STATUS:
+              UpdateStatus(Arvolunteer,totalcount);
+              break;
+        case Deletevolunteer:
+             DeleteVolunteer(Arvolunteer,totalcount);
+             SaveToTxtFile(Arvolunteer, totalcount);
+             break;
+              
         case EXIT:
-            SaveToFile(Arvolunteer,totalcount);
+            SaveToTxtFile(Arvolunteer,totalcount);
             //system("start volunteer.html");
             cout<<"Sistemden cıkılıyor... Iyı günler"<<endl;
         return;
