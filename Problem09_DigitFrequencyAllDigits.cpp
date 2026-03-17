@@ -48,18 +48,32 @@ number=number/10;
    
 
 }
+//Function to Print All Digits Frequency
+// This function reuses 'CountDigitFrequency' in a loop from 0 to 9
+void PrintAllDigitsFrequency(int UserNumber){
+    for (int i = 0; i <= 9; i++)
+    {
+        // Reuse our previous function to check each digit from 0 to 9
+        int frequency =CountDigitFrequency(UserNumber,i);
+        // Only print if the digit actually exists in the number
+        if (frequency>0)
+        {
+            cout << "Digit " << i << " Frequency is " << frequency << " Time(s).\n";
+        }
+        
+    }
+
+    
+}
+    
+    
+    
+
 
 
 int main(){
-   int UserNumber= ReadInformation("Please Enter a positive number:");
-   cout<<endl;
-int TargetDigit=ReadInformation("Please Enter the digit to check its frequency:");
+int UserNumber=ReadInformation("Please Enter a positive number:");
 
-// Display the final result
-  cout << "\nDigit " << TargetDigit << " Frequency is " 
-         << CountDigitFrequency(UserNumber, TargetDigit) << " Time(s)." << endl;
-
-
-   return 0;
+PrintAllDigitsFrequency(UserNumber);
 
 }

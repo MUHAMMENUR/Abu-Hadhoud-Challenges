@@ -1,1 +1,1 @@
-sanda|halap|05444444444|Tercuman|Musait|
+g++ Problem08_DigitFrequency.cpp -o Problem08_DigitFrequency ; if ($?) { ./Problem08_DigitFrequency }|g++ Problem08_DigitFrequency.cpp -o Problem08_DigitFrequency ; if ($?) { ./Problem08_DigitFrequency }|g++|Problem08_DigitFrequency.cpp -o Problem08_DigitFrequency ; if ($?) { ./Problem08_DigitFrequency }|Musait
