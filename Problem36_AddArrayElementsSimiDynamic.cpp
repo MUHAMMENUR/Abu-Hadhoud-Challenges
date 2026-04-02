@@ -6,11 +6,11 @@ using namespace std;
 
 
 //Function to Read Positive Number
-int ReadPositiveNumber(string Message){
+int ReadPositiveNumber(){
     int Number=0;
     do
     {
-        cout<<Message;
+        cout<<"Please Enter Number:";
         cin>>Number;
 
 
@@ -20,23 +20,26 @@ int ReadPositiveNumber(string Message){
 return Number;
 
 };
-void AddNumber(int Number,int Arr[],int &Length){
-       
-        Arr[Length]=Number;
-        Length++;
-   
-    
 
+void AddArrayElements(int Number,int Arr[100],int& Length){
+    Length++;
+    Arr[Length-1]=Number;
 }
 
+void InputUserNumberInArrays(int Arr[100],int& Length){
+    bool Addmore=0;
 
+    do
+    {
+        AddArrayElements(ReadPositiveNumber(),Arr,Length);
+     cout<<"Do you want to add number [0]NO,[1] YES? ";
+     cin>>Addmore;
+     
+     
 
-
-
-
-
-
-
+    } while (Addmore);
+    
+}
 
 
 
@@ -60,27 +63,17 @@ int main(){
 
     int Arr[100];
     
-    int Size=ReadPositiveNumber("Please Enter Number:");
+   
     int Length=0;
-    int UserChoice;
-    int NewNumber;
-    
-do
-{
+    InputUserNumberInArrays(Arr,Length);
 
-    cout<<"Do you want to add number [0]NO,[1] YES? ";
-    cin>>UserChoice;
-    if (UserChoice==1)
-    {
-        cout<<"Enter Number";
-        cin>>NewNumber;
-        AddNumber(NewNumber,Arr,Length);
-    }
+    cout<<"\nArray Length: "<<Length<<endl;
+    cout<<"Array Elemetns: ";
+    PrintArray(Arr,Length);
     
     
-} while (UserChoice==1);
-cout<<"\nArray Length: "<<Length<<endl;
-cout<<"Array Elements:";
+
+
 PrintArray(Arr,Length);
 
 
